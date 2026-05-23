@@ -11,14 +11,14 @@ body{
 .card{
   position:relative;
   background:white;
-  width: 100%;
-  max-width: 420px;
+  width:100%;
+  max-width:420px;
   padding:70px 20px 30px;
   border-radius:20px;
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
   text-align:center;
-  min-height: 100vh;
-  box-sizing: border-box;
+  min-height:100vh;
+  box-sizing:border-box;
 }
 
 h2{
@@ -93,6 +93,15 @@ button:disabled{
 
 .choice-btn:hover:not(:disabled){
   background:#d1d5db;
+}
+
+.speak-btn{
+  background:#7c3aed;
+  color:white;
+}
+
+.speak-btn:hover{
+  background:#6d28d9;
 }
 
 .restart-btn{

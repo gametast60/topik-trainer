@@ -21,6 +21,26 @@ let currentIndex = 0;
 let quizIndex = 0;
 
 // =========================
+// SPEAK
+// =========================
+
+function speak(text){
+  speechSynthesis.cancel(); // ยกเลิกเสียงค้างก่อน
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "ko-KR";
+  utterance.rate = 0.9;
+  speechSynthesis.speak(utterance);
+}
+
+function speakWord(){
+  speak(shuffledVocabulary[currentIndex].word);
+}
+
+function speakQuizWord(){
+  speak(shuffledVocabulary[quizIndex].word);
+}
+
+// =========================
 // TYPING MODE
 // =========================
 
@@ -45,8 +65,8 @@ function showWord(){
     `คำที่ ${currentIndex + 1} / ${shuffledVocabulary.length}`;
 
   document.getElementById("answerInput").focus();
+  
 }
-
 function handleEnter(event){
   if(event.key === "Enter"){
     checkAnswer();
@@ -58,7 +78,6 @@ function checkAnswer(){
   const checkBtn = document.getElementById("checkBtn");
   const userAnswer = input.value.trim();
 
-  // ป้องกันกดซ้ำขณะรอ
   if(checkBtn.disabled) return;
 
   const currentWord = shuffledVocabulary[currentIndex];
@@ -68,7 +87,6 @@ function checkAnswer(){
     result.textContent = "✅ ถูกต้อง!";
     result.className = "result correct";
 
-    // ล็อกปุ่มและ input ระหว่างรอ 1 วิ
     input.disabled = true;
     checkBtn.disabled = true;
 
@@ -119,12 +137,10 @@ function showQuiz(){
   const container = document.getElementById("choicesContainer");
   container.innerHTML = "";
 
-  // จำนวนตัวเลือก: ไม่เกิน 4 และไม่เกินจำนวนคำศัพท์ที่มี
   const numChoices = Math.min(4, shuffledVocabulary.length);
 
   let choices = [currentWord.meaning];
 
-  // สร้าง pool ของ meaning ที่ไม่ใช่คำตอบ แล้ว shuffle
   const otherMeanings = shuffleArray(
     shuffledVocabulary
       .map(item => item.meaning)
@@ -144,6 +160,9 @@ function showQuiz(){
     btn.onclick = () => checkQuizAnswer(choice);
     container.appendChild(btn);
   });
+
+speak(currentWord.word);
+
 }
 
 // =========================
@@ -155,7 +174,6 @@ function checkQuizAnswer(choice){
   const result = document.getElementById("quizResult");
   const container = document.getElementById("choicesContainer");
 
-  // ล็อกปุ่มทั้งหมดทันทีกันกดซ้ำ
   container.querySelectorAll(".choice-btn").forEach(btn => {
     btn.disabled = true;
   });
