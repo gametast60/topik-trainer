@@ -19,13 +19,15 @@ let wrongAnswers = [];
 let currentMode = "";
 let currentIndex = 0;
 let quizIndex = 0;
+let fcIndex = 0;
+let fcForgotten = [];
 
 // =========================
 // SPEAK
 // =========================
 
 function speak(text){
-  speechSynthesis.cancel(); // ยกเลิกเสียงค้างก่อน
+  speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "ko-KR";
   utterance.rate = 0.9;
@@ -38,6 +40,97 @@ function speakWord(){
 
 function speakQuizWord(){
   speak(shuffledVocabulary[quizIndex].word);
+}
+
+function speakFlashcard(){
+  speak(shuffledVocabulary[fcIndex].word);
+}
+
+// =========================
+// FLASHCARD MODE
+// =========================
+
+function startFlashcardMode(){
+  currentMode = "flashcard";
+  shuffledVocabulary = shuffleArray([...currentVocabulary]);
+  fcIndex = 0;
+  fcForgotten = [];
+  goTo("flashcardGame");
+  showFlashcard();
+}
+
+function showFlashcard(){
+  const currentWord = shuffledVocabulary[fcIndex];
+
+  // แสดงหน้าการ์ด ซ่อนหลังการ์ด
+  document.getElementById("flashcardFront").classList.remove("hidden");
+  document.getElementById("flashcardBack").classList.add("hidden");
+
+  // ใส่คำศัพท์
+  document.getElementById("fcWord").textContent = currentWord.word;
+  document.getElementById("fcWordBack").textContent = currentWord.word;
+  document.getElementById("fcMeaning").textContent = currentWord.meaning;
+
+  // progress
+  document.getElementById("flashcardProgress").textContent =
+    `คำที่ ${fcIndex + 1} / ${shuffledVocabulary.length}`;
+
+  // อ่านเสียงอัตโนมัติ
+  speak(currentWord.word);
+}
+
+function flipCard(){
+  document.getElementById("flashcardFront").classList.add("hidden");
+  document.getElementById("flashcardBack").classList.remove("hidden");
+}
+
+function fcAnswer(known){
+  const currentWord = shuffledVocabulary[fcIndex];
+
+  if(!known){
+    if(!fcForgotten.some(item => item.word === currentWord.word)){
+      fcForgotten.push(currentWord);
+    }
+  }
+
+  fcIndex++;
+
+  if(fcIndex >= shuffledVocabulary.length){
+    showFlashcardFinish();
+  }else{
+    showFlashcard();
+  }
+}
+
+function showFlashcardFinish(){
+  goTo("finishScreen");
+
+  const wrongContainer = document.getElementById("wrongAnswers");
+
+  if(fcForgotten.length === 0){
+    wrongContainer.innerHTML = `
+      <div class="wrong-list">
+        <h3>🎉 จำได้ทั้งหมด ยอดเยี่ยมมาก!</h3>
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <div class="wrong-list">
+      <h3>❌ คำที่ยังไม่ได้ (${fcForgotten.length} คำ)</h3>
+  `;
+
+  fcForgotten.forEach((item, index) => {
+    html += `
+      <div class="wrong-item">
+        ${index + 1}. <b>${item.word}</b> = ${item.meaning}
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  wrongContainer.innerHTML = html;
 }
 
 // =========================
@@ -65,8 +158,8 @@ function showWord(){
     `คำที่ ${currentIndex + 1} / ${shuffledVocabulary.length}`;
 
   document.getElementById("answerInput").focus();
-  
 }
+
 function handleEnter(event){
   if(event.key === "Enter"){
     checkAnswer();
@@ -122,10 +215,6 @@ function startQuizMode(){
   showQuiz();
 }
 
-// =========================
-// SHOW QUIZ
-// =========================
-
 function showQuiz(){
   const currentWord = shuffledVocabulary[quizIndex];
 
@@ -138,7 +227,6 @@ function showQuiz(){
   container.innerHTML = "";
 
   const numChoices = Math.min(4, shuffledVocabulary.length);
-
   let choices = [currentWord.meaning];
 
   const otherMeanings = shuffleArray(
@@ -161,13 +249,8 @@ function showQuiz(){
     container.appendChild(btn);
   });
 
-speak(currentWord.word);
-
+  speak(currentWord.word);
 }
-
-// =========================
-// CHECK QUIZ ANSWER
-// =========================
 
 function checkQuizAnswer(choice){
   const currentWord = shuffledVocabulary[quizIndex];
@@ -201,7 +284,7 @@ function checkQuizAnswer(choice){
 }
 
 // =========================
-// FINISH
+// FINISH (typing & quiz)
 // =========================
 
 function showFinish(){

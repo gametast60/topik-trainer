@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TOPIK Trainer</title>
   <link rel="stylesheet" href="style.css">
-
   <link rel="manifest" href="manifest.json">
-<script>
-  if("serviceWorker" in navigator)
-    navigator.serviceWorker.register("sw.js");
-</script>
-
+  <script>
+    if("serviceWorker" in navigator)
+      navigator.serviceWorker.register("sw.js");
+  </script>
 </head>
 
 <body>
@@ -107,8 +105,32 @@
 
     <!-- GAME MENU -->
     <div id="gameMenu" class="screen hidden">
-      <button class="menu-btn" onclick="startTypingMode()">เติมคำ</button>
-      <button class="menu-btn" onclick="startQuizMode()">จับคู่</button>
+      <button class="menu-btn" onclick="startFlashcardMode()">🃏 Flashcard</button>
+      <button class="menu-btn" onclick="startTypingMode()">⌨️ เติมคำ</button>
+      <button class="menu-btn" onclick="startQuizMode()">🔤 จับคู่</button>
+    </div>
+
+    <!-- FLASHCARD GAME -->
+    <div id="flashcardGame" class="screen hidden">
+      <div class="progress" id="flashcardProgress"></div>
+
+      <!-- หน้าการ์ด (ก่อนพลิก) -->
+      <div id="flashcardFront">
+        <div class="fc-word" id="fcWord"></div>
+        <button class="speak-btn" onclick="speakFlashcard()">🔊 ฟังเสียง</button>
+        <button class="flip-btn" onclick="flipCard()">👁 ดูความหมาย</button>
+      </div>
+
+      <!-- หลังการ์ด (หลังพลิก) -->
+      <div id="flashcardBack" class="hidden">
+        <div class="fc-word" id="fcWordBack"></div>
+        <div class="fc-meaning" id="fcMeaning"></div>
+        <button class="speak-btn" onclick="speakFlashcard()">🔊 ฟังเสียง</button>
+        <div class="fc-buttons">
+          <button class="fc-know-btn" onclick="fcAnswer(true)">✅ จำได้</button>
+          <button class="fc-forget-btn" onclick="fcAnswer(false)">❌ ยังไม่ได้</button>
+        </div>
+      </div>
     </div>
 
     <!-- TYPING GAME -->
@@ -128,13 +150,13 @@
     </div>
 
     <!-- QUIZ GAME -->
-<div id="quizGame" class="screen hidden">
-  <div class="word" id="quizWord"></div>
-  <button class="speak-btn" onclick="speakQuizWord()">🔊 ฟังอีกครั้ง</button>
-  <div id="choicesContainer"></div>
-  <div class="result" id="quizResult"></div>
-  <div class="progress" id="quizProgress"></div>
-</div>
+    <div id="quizGame" class="screen hidden">
+      <div class="word" id="quizWord"></div>
+      <button class="speak-btn" onclick="speakQuizWord()">🔊 ฟังอีกครั้ง</button>
+      <div id="choicesContainer"></div>
+      <div class="result" id="quizResult"></div>
+      <div class="progress" id="quizProgress"></div>
+    </div>
 
     <!-- FINISH SCREEN -->
     <div id="finishScreen" class="screen hidden">

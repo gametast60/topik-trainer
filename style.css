@@ -115,6 +115,62 @@ button:disabled{
 }
 
 /* =========================
+   FLASHCARD
+========================= */
+
+.fc-word{
+  font-size:36px;
+  font-weight:bold;
+  color:#2563eb;
+  margin:20px 0;
+  min-height:60px;
+}
+
+.fc-meaning{
+  font-size:22px;
+  color:#374151;
+  margin-bottom:20px;
+  padding:15px;
+  background:#f0f9ff;
+  border-radius:12px;
+}
+
+.flip-btn{
+  background:#f59e0b;
+  color:white;
+}
+
+.flip-btn:hover{
+  background:#d97706;
+}
+
+.fc-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.fc-know-btn{
+  background:#16a34a;
+  color:white;
+  flex:1;
+}
+
+.fc-know-btn:hover{
+  background:#15803d;
+}
+
+.fc-forget-btn{
+  background:#dc2626;
+  color:white;
+  flex:1;
+}
+
+.fc-forget-btn:hover{
+  background:#b91c1c;
+}
+
+/* =========================
    TOP NAV BUTTONS
 ========================= */
 
@@ -158,13 +214,8 @@ button:disabled{
   min-height:40px;
 }
 
-.correct{
-  color:green;
-}
-
-.wrong{
-  color:red;
-}
+.correct{ color:green; }
+.wrong{ color:red; }
 
 /* =========================
    PROGRESS
@@ -179,9 +230,7 @@ button:disabled{
    HIDDEN
 ========================= */
 
-.hidden{
-  display:none;
-}
+.hidden{ display:none; }
 
 /* =========================
    FINISH
@@ -220,6 +269,4 @@ button:disabled{
    SCREEN
 ========================= */
 
-.screen{
-  width:100%;
-}
+.screen{ width:100%; }

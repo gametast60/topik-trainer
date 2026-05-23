@@ -1,4 +1,4 @@
-const CACHE = "topik-v4.1"; // ← เพิ่มทุกครั้งที่แก้ไฟล์นี้
+const CACHE = "topik-v5"; // ← เพิ่มทุกครั้งที่แก้ไฟล์นี้
 const FILES = [
   "index.html", "style.css",
   "app.js", "game.js", "navigation.js",
