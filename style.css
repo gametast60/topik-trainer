@@ -678,16 +678,6 @@ button:disabled{
   z-index:20;
 }
 
-.search-btn{
-  background:#111827;
-  color:white;
-  font-weight:700;
-}
-
-.search-btn:hover{
-  background:#000;
-}
-
 .search-result{
   position:absolute;
   top:100%;
@@ -705,7 +695,7 @@ button:disabled{
 
   box-shadow:0 8px 20px rgba(0,0,0,0.12);
 
-  max-height:25vh;
+  max-height:60vh;
   overflow-y:auto;
 
   z-index:999;
