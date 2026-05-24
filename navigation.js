@@ -623,4 +623,15 @@ function clearSearchInput(){
   resultBox.classList.add("hidden");
 
   document.getElementById("searchInput").focus();
+  }
+
+// 🟢 วางเพิ่มต่อท้ายตรงนี้ได้เลยครับ
+function handleSearchEnter(event) {
+  // ตรวจสอบว่าเป็นปุ่ม Enter หรือปุ่มตกลงบนคีย์บอร์ดไหม
+  if (event.key === "Enter") {
+    // สั่งให้ค้นหาซ้ำอีกครั้งเพื่อความชัวร์
+    searchVocabulary(); 
+    // สั่งให้ยุบแป้นพิมพ์มือถือลง (ลบโฟกัสออกจากช่องพิมพ์)
+    document.getElementById("searchInput").blur(); 
+  }
 }
