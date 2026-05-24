@@ -62,6 +62,7 @@ function goBack() {
 function showMainMenu() {
   screenHistory = [];
   currentTopik  = "";
+  document.getElementById("appTitle").textContent = "TOPIK Vocab by 톤님";
   showScreen("mainMenu");
   updateButtons();
 }
@@ -71,6 +72,8 @@ function showMainMenu() {
 // =========================
 function openTopik(topik) {
   currentTopik = topik;
+  document.getElementById("appTitle").textContent =
+    topik === "topik1" ? "TOPIK 1 by 톤님" : "TOPIK 2 by 톤님";
   goTo("srsDashboard");
   renderSRSHome();
 }
@@ -85,13 +88,26 @@ function goToSRSDashboard() {
 // BUTTONS
 // =========================
 function updateButtons() {
+  const helpBtn = document.getElementById("helpButton");
   if (screenHistory.length === 0) {
     backButton.classList.add("hidden");
     homeButton.classList.add("hidden");
+    helpBtn.classList.add("hidden");
   } else {
     backButton.classList.remove("hidden");
     homeButton.classList.remove("hidden");
+    helpBtn.classList.remove("hidden");
   }
+}
+
+function showHelp() {
+  document.getElementById("helpModal").classList.remove("hidden");
+}
+function closeHelpBtn() {
+  document.getElementById("helpModal").classList.add("hidden");
+}
+function closeHelp(e) {
+  if (e.target === document.getElementById("helpModal")) closeHelpBtn();
 }
 
 // =========================
@@ -145,7 +161,7 @@ function renderSRSHome() {
       📅 ทวนวันนี้
       <span class="srs-badge">${due.length} คำ</span>
     </button>
-    <button class="srs-action-btn srs-wrongbox-btn" onclick="openWrongBox()" ${wrongBox.length === 0 ? 'disabled' : ''}>
+    <button class="srs-action-btn srs-wrongbox-btn" onclick="${wrongBox.length === 0 ? 'alertNoWrongWords()' : 'openWrongBox()'}">
       ❌ ทวนคำผิด
       <span class="srs-badge">${wrongBox.length} / ${WRONG_BOX_MAX}</span>
     </button>
@@ -203,6 +219,10 @@ function startDueFlashcard() {
 }
 
 // ==========================================
+function alertNoWrongWords() {
+  alert("📭 วันนี้ยังไม่มีคำผิดเลยครับ\n\nกรุณาเล่นโหมด ทวนวันนี้ ก่อน\nแล้วคำที่ตอบผิดจะมาเก็บไว้ที่นี่ 😊");
+}
+
 // ทวนคำผิด (กล่อง 6) — จับคู่ หรือ เติมคำ
 // ==========================================
 function openWrongBox() {
