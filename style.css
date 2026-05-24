@@ -841,3 +841,30 @@ div.search-level.level-topik2 {
   background: #dc2626 !important;
   color: white !important;
 }
+
+/* ====================================================
+   จำกัดความสูงและเปิดให้ Scroll ได้ ทั้งโหมดทวนวันนี้ และโหมดทวนคำผิด
+====================================================== */
+#srsWrongAnswers .wrong-list, 
+#wrongAnswers .wrong-list {
+  max-height: 240px;       /* จำกัดความสูงสูงสุดของกล่อง */
+  overflow-y: auto;        /* เปิดให้สกรอลล์เลื่อนขึ้น-ลงได้ */
+  padding-right: 8px;      /* เพิ่มช่องว่างด้านขวากันชนแถบสกรอลล์ */
+}
+
+/* 💡 แต่งแถบ Scrollbar ของทั้งสองกล่องให้สวยงามมนเข้ากับธีมแอป */
+#srsWrongAnswers .wrong-list::-webkit-scrollbar,
+#wrongAnswers .wrong-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#srsWrongAnswers .wrong-list::-webkit-scrollbar-thumb,
+#wrongAnswers .wrong-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;     /* สีของแถบเลื่อน */
+  border-radius: 999px;    /* ความมนของแถบเลื่อน */
+}
+
+#srsWrongAnswers .wrong-list::-webkit-scrollbar-track,
+#wrongAnswers .wrong-list::-webkit-scrollbar-track {
+  background: transparent; /* พื้นหลังโปร่งใส */
+}
