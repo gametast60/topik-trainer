@@ -7,7 +7,7 @@ const SRS_SETTINGS = "topik_srs_settings";
 const BOX_INTERVALS = [0, 1, 3, 7, 14, Infinity];
 
 const WRONG_BOX_MAX = 30;       // กล่อง 6 จุได้สูงสุด 30 คำ
-const DUE_CHUNK_SIZE = 20;      // ทวนวันนี้ทีละกี่คำ (ปรับได้)
+const DUE_CHUNK_SIZE = 15;      // ทวนวันนี้ทีละกี่คำ (ปรับได้)
 
 // key ที่ใช้เก็บ SRS data แยกตาม topik
 function srsKey() {
@@ -18,16 +18,6 @@ function wrongBoxKey() {
   return `topik_wrongbox_${currentTopik || "topik1"}`;
 }
 
-function getNewWordsPerDay() {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-  return s.newPerDay || 20;
-}
-function setNewWordsPerDay(n) {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-  s.newPerDay = n;
-  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
-}
-
 function getDueChunkSize() {
   const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
   return s.dueChunkSize || DUE_CHUNK_SIZE;
@@ -35,6 +25,26 @@ function getDueChunkSize() {
 function setDueChunkSize(n) {
   const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
   s.dueChunkSize = n;
+  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+}
+
+function getWrongChunkSize() {
+  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  return s.wrongChunkSize || 30;
+}
+function setWrongChunkSize(n) {
+  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  s.wrongChunkSize = n;
+  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+}
+
+function getPracticeChunkSize() {
+  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  return s.practiceChunkSize || 10;
+}
+function setPracticeChunkSize(n) {
+  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  s.practiceChunkSize = n;
   localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
 }
 
@@ -159,20 +169,25 @@ function getDueWords() {
   });
 }
 
-// ดึง chunk ทวนวันนี้ — loop ซ้ำได้เรื่อยๆ จนกล่อง 6 เต็ม
-// ไม่กรองคำออก เพราะจุดประสงค์คือทวนจนกว่าจะจำได้ (กล่อง 6 เต็ม)
 function getDueChunk() {
-  const allDue = getDueWords();
-  if (allDue.length === 0) return [];
-  return shuffleArraySRS([...allDue]).slice(0, getDueChunkSize());
-}
+  const data  = loadSRS();
+  const today = todayStr();
+  const all   = Object.values(data);
+  const limit = getDueChunkSize();
 
-function getNewWords(limit) {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-  const usedToday = s[`todayNewWords_${currentTopik}`] || 0;
-  const remaining = Math.max(0, limit - usedToday);
-  if (remaining <= 0) return [];
-  return Object.values(loadSRS()).filter(item => item.box === 0).slice(0, remaining);
+  const due = all.filter(item =>
+    item.box >= 1 && item.box <= 4 &&
+    item.nextReview && item.nextReview <= today
+  );
+
+  const newWords = all.filter(item => item.box === 0);
+
+  const combined = [
+    ...shuffleArraySRS(due),
+    ...shuffleArraySRS(newWords),
+  ];
+
+  return combined.slice(0, limit);
 }
 
 // "ฝึกหัด" — สุ่มจากกล่อง 0-5 ทั้งหมด ไม่มีผล SRS
@@ -206,8 +221,6 @@ function recordAnswer(word, correct) {
   const item  = data[word];
   if (!item) return;
 
-  const wasNew = item.box === 0;
-
   if (correct) {
     item.box = Math.min(item.box + 1, 5);
     const interval = BOX_INTERVALS[item.box];
@@ -218,13 +231,6 @@ function recordAnswer(word, correct) {
   }
   data[word] = item;
   saveSRS(data);
-
-  if (wasNew) {
-    const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-    const countKey = `todayNewWords_${currentTopik}`;
-    s[countKey] = (s[countKey] || 0) + 1;
-    localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
-  }
 }
 
 function getSRSStats() {

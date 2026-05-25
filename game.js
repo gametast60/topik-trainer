@@ -58,11 +58,18 @@ function flipCard(){
 
 function fcAnswer(known){
   const currentWord = shuffledVocabulary[fcIndex];
-  if(!known){
-    if(!fcForgotten.some(item => item.word === currentWord.word)){
-      fcForgotten.push(currentWord);
+
+  // อัปเดต SRS เฉพาะโหมด "ทวนวันนี้" เท่านั้น
+  if(isDueMode){
+    recordAnswer(currentWord.word, known);
+    if(!known){
+      addToWrongBox(currentWord);
+      if(!fcForgotten.some(item => item.word === currentWord.word)){
+        fcForgotten.push(currentWord);
+      }
     }
   }
+
   fcIndex++;
 
   // ถ้ากล่องคำผิดเต็มแล้ว — หยุดกลางคันทันที

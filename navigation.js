@@ -10,9 +10,6 @@ let srsSessionMode  = "";
 let srsSessionType  = "";   // "due" | "practice" | "wrongbox"
 let srsWrongList    = [];
 
-let dueAllWords  = [];
-let dueUsedWords = [];
-
 const backButton = document.getElementById("backButton");
 const homeButton = document.getElementById("homeButton");
 
@@ -106,14 +103,14 @@ function renderSRSHome(){
   let boxHtml = "";
   for(let i = 0; i <= 5; i++){
     boxHtml += `
-      <div class="srs-box" style="--box-color:${BOX_COLORS[i]}">
+      <div class="srs-box srs-box-clickable" style="--box-color:${BOX_COLORS[i]}" onclick="openBoxInspector(${i})">
         <div class="srs-box-count">${counts[i]}</div>
         <div class="srs-box-label">${BOX_LABELS[i]}</div>
       </div>`;
   }
   const wbFull = wrongBox.length >= WRONG_BOX_MAX;
   boxHtml += `
-    <div class="srs-box srs-box-wrongbox" style="--box-color:#db2777">
+    <div class="srs-box srs-box-wrongbox srs-box-clickable" style="--box-color:#db2777" onclick="openWrongBoxInspector()">
       <div class="srs-box-count">${wrongBox.length}</div>
       <div class="srs-box-label">❌คำผิด</div>
       ${wbFull ? '<div class="srs-box-full">เต็ม</div>' : ''}
@@ -123,14 +120,14 @@ function renderSRSHome(){
   const actions = document.getElementById("srsActions");
   actions.innerHTML = `
     <button class="srs-action-btn srs-due-btn" onclick="openSRSDue()">
-      📅 ทวนวันนี้ <span class="srs-badge">${due.length} คำ</span>
-    </button>
-    <button class="srs-action-btn srs-wrongbox-btn" onclick="${wrongBox.length === 0 ? 'alertNoWrongWords()' : 'openWrongBox()'}">
-      ❌ ทวนคำผิด <span class="srs-badge">${wrongBox.length} / ${WRONG_BOX_MAX}</span>
-    </button>
-    <button class="srs-action-btn srs-new-btn" onclick="openPractice()">
-      🎮 ฝึกหัด <span class="srs-badge">${Object.values(loadSRS()).length} คำ</span>
-    </button>
+  📅 ทวนวันนี้
+</button>
+<button class="srs-action-btn srs-wrongbox-btn" onclick="${wrongBox.length === 0 ? 'alertNoWrongWords()' : 'openWrongBox()'}">
+  ❌ ทวนคำผิด <span class="srs-badge">${wrongBox.length} / ${WRONG_BOX_MAX}</span>
+</button>
+<button class="srs-action-btn srs-new-btn" onclick="openPractice()">
+  🎮 ฝึกหัด
+</button>
     <button class="srs-action-btn srs-stat-btn" onclick="openSRSStats()">📊 สถิติ</button>
     <button class="srs-action-btn srs-settings-btn" onclick="openSettings()">⚙️ ตั้งค่า</button>`;
 }
@@ -178,9 +175,10 @@ function alertNoWrongWords(){
 function openWrongBox(){
   const words = getWrongBoxWords();
   if(words.length === 0){ alert("ยังไม่มีคำผิดวันนี้"); return; }
-  srsSessionWords   = [...words];
+  const wChunk = getWrongChunkSize();
+srsSessionWords   = shuffleArray([...words]).slice(0, wChunk);
   srsSessionType    = "wrongbox";
-  currentVocabulary = words.map(i => ({ word: i.word, meaning: i.meaning }));
+  currentVocabulary = srsSessionWords.map(i => ({ word: i.word, meaning: i.meaning }));
   document.getElementById("wrongBoxGameInfo").innerHTML = `
     <div class="srs-session-label">❌ ทวนคำผิด</div>
     <div class="srs-session-note">${words.length} คำ — เลือกรูปแบบการเล่น</div>`;
@@ -205,7 +203,7 @@ function startWrongBoxGame(mode){
 // ฝึกหัด (Practice)
 // ============================================================
 function openPractice(){
-  const words = getPracticeWords(20);
+  const words = getPracticeWords(getPracticeChunkSize());
   if(words.length === 0){ alert("ยังไม่มีคำศัพท์"); return; }
   srsSessionWords   = words;
   srsSessionType    = "practice";
@@ -270,7 +268,7 @@ function showSRSFinish(wrongList){
   const stillHaveDue = getDueWords().length > 0;
   if(srsSessionType === "due" && !wbFull && stillHaveDue){
     nextBtn.style.display = "";
-    nextBtn.textContent   = `▶ ทวนชุดถัดไป (${getDueWords().length} คำ)`;
+    nextBtn.textContent = `▶ ทวนชุดถัดไป`;
   } else {
     nextBtn.style.display = "none";
   }
@@ -333,7 +331,6 @@ function openSRSStats(){
     </div>
     <div class="stat-bars">${barsHtml}</div>`;
 
-  document.getElementById("newPerDayInput").value = getNewWordsPerDay();
   document.getElementById("dueChunkInput").value  = getDueChunkSize();
   goTo("srsStats");
 }
@@ -343,16 +340,19 @@ function openSRSStats(){
 // ============================================================
 function openSettings(){
   document.getElementById("dueChunkInput").value  = getDueChunkSize();
-  document.getElementById("newPerDayInput").value = getNewWordsPerDay();
+  document.getElementById("wrongChunkInput").value  = getWrongChunkSize();
+  document.getElementById("practiceChunkInput").value = getPracticeChunkSize();
   document.querySelectorAll("#clearBoxChecks input").forEach(cb => cb.checked = false);
   goTo("settingsPanel");
 }
 
 function saveSettings(){
-  const np = parseInt(document.getElementById("newPerDayInput").value);
   const dc = parseInt(document.getElementById("dueChunkInput").value);
-  if(!isNaN(np) && np >= 1) setNewWordsPerDay(np);
+  const wc = parseInt(document.getElementById("wrongChunkInput").value);
+  const pc = parseInt(document.getElementById("practiceChunkInput").value);
   if(!isNaN(dc) && dc >= 5) setDueChunkSize(dc);
+  if(!isNaN(wc) && wc >= 5) setWrongChunkSize(wc);
+  if(!isNaN(pc) && pc >= 5) setPracticeChunkSize(pc);
   alert("✅ บันทึกแล้ว!");
 }
 
@@ -462,4 +462,61 @@ function handleSearchEnter(event){
     searchVocabulary();
     document.getElementById("searchInput").blur();
   }
+}
+
+// ============================================================
+// BOX INSPECTOR POPUP
+// ============================================================
+function openBoxInspector(boxNum){
+  const data = loadSRS();
+  const words = Object.values(data).filter(item => item.box === boxNum);
+
+  const BOX_LABELS = ["ใหม่","1วัน","3วัน","7วัน","14วัน","จำได้✅"];
+  const BOX_COLORS = ["#6b7280","#3b82f6","#8b5cf6","#f59e0b","#ef4444","#16a34a"];
+  const label = boxNum <= 5 ? BOX_LABELS[boxNum] : "❌คำผิด";
+  const color = boxNum <= 5 ? BOX_COLORS[boxNum] : "#db2777";
+
+  let listHtml = "";
+  if(words.length === 0){
+    listHtml = `<div class="box-inspector-empty">ไม่มีคำในกล่องนี้</div>`;
+  } else {
+    words.forEach((item, i) => {
+      const nextReview = item.nextReview ? `<span class="box-inspector-date">${item.nextReview}</span>` : "";
+      listHtml += `<div class="box-inspector-item">
+        <span class="box-inspector-num">${i+1}.</span>
+        <span class="box-inspector-word">${item.word}</span>
+        <span class="box-inspector-meaning">${item.meaning}</span>
+        ${nextReview}
+      </div>`;
+    });
+  }
+
+  document.getElementById("boxInspectorTitle").textContent = `กล่อง ${boxNum} — ${label} (${words.length} คำ)`;
+  document.getElementById("boxInspectorTitle").style.color = color;
+  document.getElementById("boxInspectorList").innerHTML = listHtml;
+  document.getElementById("boxInspectorModal").classList.remove("hidden");
+}
+
+function openWrongBoxInspector(){
+  const words = getWrongBoxWords();
+  let listHtml = "";
+  if(words.length === 0){
+    listHtml = `<div class="box-inspector-empty">ไม่มีคำผิดวันนี้</div>`;
+  } else {
+    words.forEach((item, i) => {
+      listHtml += `<div class="box-inspector-item">
+        <span class="box-inspector-num">${i+1}.</span>
+        <span class="box-inspector-word">${item.word}</span>
+        <span class="box-inspector-meaning">${item.meaning}</span>
+      </div>`;
+    });
+  }
+  document.getElementById("boxInspectorTitle").textContent = `กล่องคำผิด (${words.length} คำ)`;
+  document.getElementById("boxInspectorTitle").style.color = "#db2777";
+  document.getElementById("boxInspectorList").innerHTML = listHtml;
+  document.getElementById("boxInspectorModal").classList.remove("hidden");
+}
+
+function closeBoxInspector(){
+  document.getElementById("boxInspectorModal").classList.add("hidden");
 }
