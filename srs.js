@@ -241,7 +241,10 @@ function getSRSStats() {
     total:    all.length,
     learned:  all.filter(i => i.box >= 1).length,
     mastered: all.filter(i => i.box === 5).length,
-    dueToday: getDueWords().length,
+    dueToday: Object.values(loadSRS()).filter(item =>
+  item.box >= 1 && item.box <= 4 &&
+  item.nextReview && item.nextReview <= todayStr()
+).length,
     newLeft:  all.filter(i => i.box === 0).length,
   };
 }
