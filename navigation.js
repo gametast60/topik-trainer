@@ -228,13 +228,8 @@ function startPracticeGame(mode){
 // SRS FINISH SCREEN (ทวนวันนี้)
 // ============================================================
 function showSRSFinish(wrongList){
-  if(srsSessionType === "due"){
-    shuffledVocabulary.slice(0, fcIndex).forEach(item => {
-      const wasWrong = wrongList.some(w => w.word === item.word);
-      recordAnswer(item.word, !wasWrong);
-      if(wasWrong) addToWrongBox(item);
-    });
-  }
+  // หมายเหตุ: recordAnswer() และ addToWrongBox() ถูกเรียกใน fcAnswer() แล้ว
+  // ไม่ต้องเรียกซ้ำที่นี่ (เดิมทำให้ box กระโดด 2 ขั้น เช่น box 0 → 2 แทนที่จะเป็น 0 → 1)
 
   goTo("srsFinishScreen");
 
