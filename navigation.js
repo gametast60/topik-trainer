@@ -26,6 +26,10 @@ function goTo(screenId){
   const cur = document.querySelector(".screen:not(.hidden)");
   if(cur) screenHistory.push(cur.id);
   showScreen(screenId);
+  // ซ่อน badge ทุกตัวก่อนเสมอ แล้วค่อยให้เกม set ใหม่
+  ["flashcardProgress","progress","quizProgress"].forEach(id => {
+    document.getElementById(id).classList.add("hidden");
+  });
   const hideTitle = screenId === "typingGame" || screenId === "quizGame";
   document.getElementById("appTitle").classList.toggle("hidden", hideTitle);
   updateNavButtons();
@@ -193,7 +197,7 @@ srsSessionWords   = shuffleArray([...words]).slice(0, wChunk);
   currentVocabulary = srsSessionWords.map(i => ({ word: i.word, meaning: i.meaning }));
   document.getElementById("wrongBoxGameInfo").innerHTML = `
     <div class="srs-session-label">❌ ทวนคำผิด</div>
-    <div class="srs-session-note">${words.length} คำ — เลือกรูปแบบการเล่น</div>`;
+    <div class="srs-session-note">${wChunk} คำ — เลือกรูปแบบการเล่น</div>`;
   goTo("wrongBoxGameMenu");
 }
 
