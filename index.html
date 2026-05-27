@@ -229,15 +229,15 @@
     </div>
 
     <!-- TYPING GAME -->
-    <div id="typingGame" class="screen hidden">
-      <div class="meaning" id="meaning"></div>
-      <div class="answer-input-wrap">
-        <input type="text" id="answerInput" placeholder="พิมพ์คำศัพท์เกาหลี" onkeydown="handleEnter(event)">
-        <button class="clear-answer-btn hidden" id="clearAnswerBtn" onclick="clearAnswerInput()">✕</button>
-      </div>
-      <button id="checkBtn" class="check-btn" onclick="checkAnswer()">ตรวจคำตอบ</button>
-      <div class="result" id="result"></div>
-    </div>
+<div id="typingGame" class="screen hidden">
+  <div class="meaning" id="meaning"></div>
+  <div class="result" id="result"></div>
+  <div class="answer-input-wrap">
+    <input type="text" id="answerInput" placeholder="พิมพ์คำศัพท์เกาหลี" onkeydown="handleEnter(event)">
+    <button class="clear-answer-btn hidden" id="clearAnswerBtn" onclick="clearAnswerInput()">✕</button>
+  </div>
+  <button id="checkBtn" class="check-btn" onclick="checkAnswer()">ตรวจคำตอบ</button>
+</div>
 
     <!-- QUIZ GAME -->
     <div id="quizGame" class="screen hidden">
