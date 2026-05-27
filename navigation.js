@@ -48,6 +48,7 @@ function goBack(){
   } else if(prevScreen === "srsDashboard"){
     document.getElementById("appTitle").textContent =
       currentTopik === "topik1" ? "TOPIK 1 by 톤님" : "TOPIK 2 by 톤님";
+      renderSRSHome();
   }
   updateNavButtons();
 }
