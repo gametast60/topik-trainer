@@ -971,3 +971,20 @@ div.search-level.level-topik2 {
 .switch-mode-btn:hover {
   background: #1d4ed8;
 }
+
+/* =========================
+   STOP FLASHCARD BUTTON
+========================= */
+.stop-fc-btn {
+  background: #ef4444;
+  color: white;
+  width: auto;
+  padding: 8px 28px;
+  font-size: 15px;
+  border-radius: 999px;
+  display: block;
+  margin: 0 auto 8px;
+}
+.stop-fc-btn:hover {
+  background: #b91c1c;
+}
