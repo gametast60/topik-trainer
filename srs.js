@@ -1,6 +1,5 @@
 
 const SRS_DATE     = "topik_srs_date";
-const SRS_SETTINGS = "topik_srs_settings"; // (legacy — ไม่ใช้แล้ว)
 const BOX_INTERVALS = [0, 1, 3, 7, 14, Infinity];
 
 // key สำหรับ settings แยกตาม topik

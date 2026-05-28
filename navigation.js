@@ -277,7 +277,7 @@ function showSRSFinish(wrongList){
   }
 
   const nextBtn      = document.getElementById("srsNextChunkBtn");
-  const stillHaveDue = getDueWords().length > 0;
+  const stillHaveDue = getDueChunk().length > 0;
   if(srsSessionType === "due" && !wbFull && stillHaveDue){
     nextBtn.style.display = "";
     nextBtn.textContent = `▶ ทวนชุดถัดไป`;
@@ -293,12 +293,6 @@ function continueNextChunk(){
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   currentVocabulary = [...srsSessionWords];
   startDueFlashcard();
-}
-
-function replaySRSSession(){
-  if(srsSessionType === "due")          startDueFlashcard();
-  else if(srsSessionType === "wrongbox") startWrongBoxGame(srsSessionMode);
-  else                                   startPracticeGame(srsSessionMode);
 }
 
 // ============================================================
@@ -404,9 +398,9 @@ function resetEverything(){
   saveSRS(data);
   clearWrongBox();
 
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-  s[`todayNewWords_${currentTopik}`] = 0;
-  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
+s[`todayNewWords_${currentTopik}`] = 0;
+localStorage.setItem(srsSettingsKey(), JSON.stringify(s));              
 
   initAllVocab();
   caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => {

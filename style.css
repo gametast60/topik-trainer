@@ -225,14 +225,6 @@ button:disabled{
 .correct{ color:green; }
 .wrong{ color:red; }
 
-/* =========================
-   PROGRESS
-========================= */
-
-.progress{
-  margin-top:15px;
-  color:#666;
-}
 
 /* =========================
    HIDDEN
