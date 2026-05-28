@@ -1,13 +1,15 @@
-// ==========================================================
-// SRS ENGINE — แยก key ตาม topik (topik1 / topik2)
-// ==========================================================
 
 const SRS_DATE     = "topik_srs_date";
-const SRS_SETTINGS = "topik_srs_settings";
+const SRS_SETTINGS = "topik_srs_settings"; // (legacy — ไม่ใช้แล้ว)
 const BOX_INTERVALS = [0, 1, 3, 7, 14, Infinity];
 
+// key สำหรับ settings แยกตาม topik
+function srsSettingsKey() {
+  return `topik_srs_settings_${currentTopik || "topik1"}`;
+}
+
 const WRONG_BOX_MAX = 30;       // กล่อง 6 จุได้สูงสุด 30 คำ
-const DUE_CHUNK_SIZE = 15;      // ทวนวันนี้ทีละกี่คำ (ปรับได้)
+const DUE_CHUNK_SIZE = 20;      // ทวนวันนี้ทีละกี่คำ (ปรับได้)
 
 // key ที่ใช้เก็บ SRS data แยกตาม topik
 function srsKey() {
@@ -19,33 +21,33 @@ function wrongBoxKey() {
 }
 
 function getDueChunkSize() {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
   return s.dueChunkSize || DUE_CHUNK_SIZE;
 }
 function setDueChunkSize(n) {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
   s.dueChunkSize = n;
-  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+  localStorage.setItem(srsSettingsKey(), JSON.stringify(s));
 }
 
 function getWrongChunkSize() {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
-  return s.wrongChunkSize || 30;
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
+  return s.wrongChunkSize || 15;
 }
 function setWrongChunkSize(n) {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
   s.wrongChunkSize = n;
-  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+  localStorage.setItem(srsSettingsKey(), JSON.stringify(s));
 }
 
 function getPracticeChunkSize() {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
   return s.practiceChunkSize || 10;
 }
 function setPracticeChunkSize(n) {
-  const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+  const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
   s.practiceChunkSize = n;
-  localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+  localStorage.setItem(srsSettingsKey(), JSON.stringify(s));
 }
 
 function loadSRS() {
@@ -122,10 +124,10 @@ function checkDailyReset() {
   const today = todayStr();
   const dateKey = `${SRS_DATE}_${currentTopik}`;
   if (localStorage.getItem(dateKey) !== today) {
-    const s = JSON.parse(localStorage.getItem(SRS_SETTINGS) || "{}");
+    const s = JSON.parse(localStorage.getItem(srsSettingsKey()) || "{}");
     const countKey = `todayNewWords_${currentTopik}`;
     s[countKey] = 0;
-    localStorage.setItem(SRS_SETTINGS, JSON.stringify(s));
+    localStorage.setItem(srsSettingsKey(), JSON.stringify(s));
     localStorage.setItem(dateKey, today);
   }
 }
