@@ -30,7 +30,7 @@ function goTo(screenId){
   ["flashcardProgress","progress","quizProgress"].forEach(id => {
     document.getElementById(id).classList.add("hidden");
   });
-  const hideTitle = screenId === "typingGame" || screenId === "quizGame";
+  const hideTitle = screenId === "typingGame" || screenId === "quizGame" || screenId === "flashcardGame";
   document.getElementById("appTitle").classList.toggle("hidden", hideTitle);
   updateNavButtons();
 }
@@ -57,10 +57,13 @@ function updateNavButtons(){
   const helpBtn = document.getElementById("helpButton");
   const hidden  = screenHistory.length === 0;
   const inFlashcard = !document.getElementById("flashcardGame").classList.contains("hidden");
+  const inTyping    = !document.getElementById("typingGame").classList.contains("hidden");
+  const inQuiz      = !document.getElementById("quizGame").classList.contains("hidden");
+  const hideAll = hidden || inFlashcard || inTyping || inQuiz;
 
-  backButton.classList.toggle("hidden", hidden || inFlashcard);
-  homeButton.classList.toggle("hidden", hidden || inFlashcard);
-  helpBtn.classList.toggle("hidden", hidden || inFlashcard);
+  backButton.classList.toggle("hidden", hideAll);
+  homeButton.classList.toggle("hidden", hideAll);
+  helpBtn.classList.toggle("hidden", hideAll);
 }
 
 // ============================================================
@@ -70,6 +73,10 @@ function showMainMenu(){
   screenHistory = [];
   currentTopik  = "";
   document.getElementById("appTitle").textContent = "TOPIK Vocab by 톤님";
+  document.getElementById("appTitle").classList.remove("hidden");
+  ["flashcardProgress","progress","quizProgress"].forEach(id => {
+    document.getElementById(id).classList.add("hidden");
+  });
   showScreen("mainMenu");
   updateNavButtons();
 }
@@ -175,9 +182,16 @@ function openSRSDue(){
 
 function startDueFlashcard(){
   shuffledVocabulary = [...currentVocabulary];
-  fcIndex    = 0;
-  fcForgotten = [];
-  isDueMode  = true;
+  fcIndex       = 0;
+  fcForgotten   = [];
+  pendingList   = [];
+  fillWrongList = [];
+  fillIndex     = 0;
+  dueStage      = 1;
+  isDueMode     = true;
+  // ซ่อน fillCardUI เผื่อค้างจากรอบก่อน
+  const fillUI = document.getElementById("fillCardUI");
+  if(fillUI) fillUI.classList.add("hidden");
   goTo("flashcardGame");
   showFlashcard();
 }
@@ -249,8 +263,8 @@ function startPracticeGame(mode){
 // SRS FINISH SCREEN (ทวนวันนี้)
 // ============================================================
 function showSRSFinish(wrongList){
-  // หมายเหตุ: recordAnswer() และ addToWrongBox() ถูกเรียกใน fcAnswer() แล้ว
-  // ไม่ต้องเรียกซ้ำที่นี่ (เดิมทำให้ box กระโดด 2 ขั้น เช่น box 0 → 2 แทนที่จะเป็น 0 → 1)
+  // wrongList = fcForgotten ซึ่งรวมคำผิดทั้ง 2 ด่านไว้แล้ว
+  // (ด่าน 1: จำไม่ได้ / ด่าน 2: เติมผิด — ทั้งคู่ push เข้า fcForgotten)
 
   goTo("srsFinishScreen");
 
@@ -260,18 +274,37 @@ function showSRSFinish(wrongList){
 
   let statusHtml = "";
   if(srsSessionType === "due"){
-    statusHtml = `<div class="wb-status">
-      ❌ กล่องคำผิด: <b>${wb.length} / ${WRONG_BOX_MAX}</b>
-      ${wbFull ? '<span class="wb-full-tag">เต็ม!</span>' : ''}
-    </div>`;
+    // แสดงสรุปสถิติ
+    const totalPlayed    = shuffledVocabulary.length;
+    const stage1Wrong    = fcForgotten.filter(w => !fillWrongList.some(f => f.word === w.word)).length;
+    // คำผิดด่าน 1 = fcForgotten ที่ไม่ได้ไปถึงด่าน 2
+    // คำผิดด่าน 2 = fillWrongList
+    const stage1WrongCount = fcForgotten.length - fillWrongList.length;
+    const stage2WrongCount = fillWrongList.length;
+    const promotedCount    = fillCorrectCount;
+
+    statusHtml = `
+      <div class="summary-stats">
+        <div class="summary-row">❌ ผิดด่าน 1 (จำไม่ได้): <b>${stage1WrongCount} คำ</b></div>
+        <div class="summary-row">❌ ผิดด่าน 2 (เติมผิด): <b>${stage2WrongCount} คำ</b></div>
+      </div>
+      <div class="wb-status">
+        กล่องคำผิด: <b>${wb.length} / ${WRONG_BOX_MAX}</b>
+        ${wbFull ? '<span class="wb-full-tag">เต็ม!</span>' : ''}
+      </div>`;
   }
 
   if(wrongList.length === 0){
-    container.innerHTML = `<div class="wrong-list"><h3>🎉 ยอดเยี่ยม! ตอบถูกทั้งหมด</h3>${statusHtml}</div>`;
+    container.innerHTML = `<div class="wrong-list"><h3>🎉 ยอดเยี่ยม! ผ่านทั้ง 2 ด่าน</h3>${statusHtml}</div>`;
   } else {
     let html = `<div class="wrong-list"><h3>❌ คำที่ยังจำไม่ได้ (${wrongList.length} คำ)</h3>${statusHtml}`;
     wrongList.forEach((item, i) => {
-      html += `<div class="wrong-item">${i+1}. <b>${item.word}</b> = ${item.meaning}</div>`;
+      // ระบุว่าผิดจากด่านไหน
+      const isStage2Wrong = fillWrongList.some(f => f.word === item.word);
+      const tag = isStage2Wrong
+        ? `<span class="wrong-stage-tag stage2">ด่าน 2</span>`
+        : `<span class="wrong-stage-tag stage1">ด่าน 1</span>`;
+      html += `<div class="wrong-item">${i+1}. <b>${item.word}</b> = ${item.meaning} ${tag}</div>`;
     });
     container.innerHTML = html + `</div>`;
   }
@@ -366,6 +399,8 @@ function clearSelectedBoxes(){
   const checked = [...document.querySelectorAll("#clearBoxChecks input[value]:checked")].map(cb => parseInt(cb.value));
   const clearWB = document.getElementById("clearWrongBoxCheck")?.checked;
   if(checked.length === 0 && !clearWB){ alert("ยังไม่ได้เลือกกล่องเลยครับ"); return; }
+
+  if(!confirm("⚠️ ยืนยันรีเซ็ตกล่องที่เลือก?\n\nคำในกล่องเหล่านี้จะถูกส่งกลับกล่อง 0 ทั้งหมด")) return;
 
   let count = 0;
   if(checked.length > 0){

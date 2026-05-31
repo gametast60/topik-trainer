@@ -168,7 +168,10 @@
           <label><input type="checkbox" value="5"> กล่อง 5 (จำได้✅)</label>
           <label><input type="checkbox" id="clearWrongBoxCheck"> กล่องคำผิด (❌)</label>
         </div>
-        <button class="settings-btn settings-btn-red" onclick="clearSelectedBoxes()">รีเซ็ตกล่องที่เลือก</button>
+        <div style="display:flex;gap:8px;margin-top:8px">
+  <button class="settings-btn settings-btn-red" style="flex:1;margin-top:0" onclick="clearSelectedBoxes()">รีเซ็ตกล่องที่เลือก</button>
+  <button class="settings-btn" style="flex:1;margin-top:0;background:#6b7280;color:white" onclick="document.querySelectorAll('#clearBoxChecks input').forEach(cb=>cb.checked=false)">ลบที่เลือก</button>
+</div>
       </div>
 
       <div class="settings-divider"></div>
@@ -226,10 +229,35 @@
           <button class="fc-forget-btn" onclick="fcAnswer(false)">❌ จำไม่ได้</button>
         </div>
       </div>
+
+      <!-- ด่าน 2: Fill Blank UI -->
+      <div id="fillCardUI" class="hidden">
+        <div class="fc-meaning" id="fillMeaning"></div>
+        <div class="result" id="fillResult"></div>
+        <div class="answer-input-wrap">
+          <input type="text" id="fillInput" placeholder="พิมพ์คำศัพท์เกาหลี" onkeydown="handleFillEnter(event)">
+          <button class="clear-answer-btn hidden" id="fillClearBtn" onclick="clearFillInput()">✕</button>
+        </div>
+        <button id="fillCheckBtn" class="check-btn" onclick="checkFillAnswer()">ตรวจคำตอบ</button>
+      </div>
+    </div>
+
+    <!-- STAGE 2 POPUP -->
+    <div id="stage2Popup" class="stage2-overlay hidden">
+      <div class="stage2-sheet">
+        <div class="stage2-title">🎯 ด่าน 1 เสร็จแล้ว</div>
+        <div class="stage2-body">
+          <div class="stage2-heading">กำลังเข้าสู่ด่าน 2</div>
+          <div class="stage2-sub">(ฝึก Active Recall)</div>
+          <div class="stage2-desc">คำที่จะเลื่อนกล่องได้<br>ต้องผ่านด่านนี้ด้วย</div>
+        </div>
+        <button class="stage2-ok-btn" onclick="confirmStage2()">ตกลง</button>
+      </div>
     </div>
 
     <!-- TYPING GAME -->
 <div id="typingGame" class="screen hidden">
+  <button class="stop-fc-btn" onclick="stopWrongBoxGame()">⏹ หยุดเล่น</button>
   <div class="meaning" id="meaning"></div>
   <div class="result" id="result"></div>
   <div class="answer-input-wrap">
@@ -241,6 +269,7 @@
 
     <!-- QUIZ GAME -->
     <div id="quizGame" class="screen hidden">
+      <button class="stop-fc-btn" onclick="stopWrongBoxGame()">⏹ หยุดเล่น</button>
       <div class="word" id="quizWord"></div>
       <button class="speak-btn" onclick="speakQuizWord()">🔊 ฟังอีกครั้ง</button>
       <div id="choicesContainer"></div>
@@ -253,7 +282,7 @@
       <div id="wrongAnswers"></div>
       <button class="restart-btn" onclick="replayCurrentMode()">🔄 เล่นชุดนี้อีกครั้ง</button>
       <button class="restart-btn switch-mode-btn" id="switchModeBtn" onclick="switchMode()"></button>
-      <button class="restart-btn home-finish-btn" onclick="goToSRSDashboard()">🏠 กลับหน้าหลัก</button>
+      <button class="restart-btn home-finish-btn" onclick="goToSRSDashboard()">🏠 กลับหน้า SRS</button>
     </div>
 
     <!-- SRS FINISH SCREEN (ทวนวันนี้) -->
@@ -309,131 +338,3 @@
 
 </body>
 </html>
-<style>
-/* HELP BUTTON */
-.help-btn {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border-radius: 50%;
-  background: #6b7280;
-  color: white;
-  font-size: 18px;
-  font-weight: 900;
-  margin-top: 0;
-  cursor: pointer;
-  border: none;
-  line-height: 34px;
-  z-index: 10;
-}
-.help-btn:hover { background: #4b5563; }
-
-/* HELP MODAL OVERLAY */
-.help-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.help-modal.hidden { display: none; }
-
-/* HELP CONTENT SHEET */
-.help-content {
-  background: white;
-  width: 100%;
-  max-width: 420px;
-  max-height: 80vh;
-  overflow-y: auto;
-  border-radius: 20px 20px 0 0;
-  padding: 24px 20px 40px;
-  position: relative;
-  text-align: left;
-  box-sizing: border-box;
-}
-
-.help-content h3 {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: #111827;
-  margin: 0 0 20px;
-  line-height: 1.4;
-}
-
-.help-close-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 50%;
-  background: #e5e7eb;
-  color: #374151;
-  font-size: 15px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  margin: 0;
-  line-height: 32px;
-}
-.help-close-btn:hover { background: #d1d5db; }
-
-.help-section {
-  margin-bottom: 20px;
-}
-
-.help-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: #1e40af;
-  margin-bottom: 8px;
-}
-
-.help-section p {
-  font-size: 14px;
-  color: #374151;
-  margin: 0 0 8px;
-  line-height: 1.5;
-}
-
-.help-section ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.help-section ul li {
-  font-size: 14px;
-  color: #374151;
-  margin-bottom: 6px;
-  line-height: 1.5;
-}
-
-.help-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.help-table th {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 7px 8px;
-  text-align: left;
-  font-weight: 700;
-}
-
-.help-table td {
-  padding: 7px 8px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #374151;
-  vertical-align: top;
-}
-</style>

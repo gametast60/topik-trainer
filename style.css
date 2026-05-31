@@ -995,3 +995,260 @@ div.search-level.level-topik2 {
   margin: 4px auto 8px;
 }
 .progress-badge.hidden { display: none; }
+/* =========================
+   STAGE 2 POPUP OVERLAY
+========================= */
+.stage2-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stage2-overlay.hidden { display: none; }
+
+.stage2-sheet {
+  background: white;
+  width: 88%;
+  max-width: 360px;
+  border-radius: 20px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.stage2-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1e40af;
+  margin-bottom: 16px;
+}
+
+.stage2-heading {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.stage2-sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 14px;
+}
+
+.stage2-desc {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.7;
+  background: #f0fdf4;
+  border: 1.5px solid #16a34a;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+
+.stage2-ok-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 40px;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+}
+.stage2-ok-btn:hover { background: #1d4ed8; }
+
+/* =========================
+   FILL CARD UI (ด่าน 2)
+========================= */
+.fill-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+#fillCardUI .fc-meaning {
+  font-size: 26px;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 18px;
+  min-height: 60px;
+}
+
+/* =========================
+   SUMMARY STATS (SRS Finish)
+========================= */
+.summary-stats {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 0 8px;
+  text-align: left;
+}
+
+.summary-row {
+  font-size: 14px;
+  color: #374151;
+  padding: 4px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row b { color: #111827; }
+
+/* WRONG STAGE TAG */
+.wrong-stage-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.wrong-stage-tag.stage1 {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.wrong-stage-tag.stage2 {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* progress badge ด่าน 2 สีเขียว */
+.progress-badge.stage2 {
+  background: #16a34a;
+}
+
+.help-btn {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  background: #6b7280;
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  margin-top: 0;
+  cursor: pointer;
+  border: none;
+  line-height: 34px;
+  z-index: 10;
+}
+.help-btn:hover { background: #4b5563; }
+
+/* HELP MODAL OVERLAY */
+.help-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.help-modal.hidden { display: none; }
+
+/* HELP CONTENT SHEET */
+.help-content {
+  background: white;
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px 40px;
+  position: relative;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.help-content h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 20px;
+  line-height: 1.4;
+}
+
+.help-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  line-height: 32px;
+}
+.help-close-btn:hover { background: #d1d5db; }
+
+.help-section {
+  margin-bottom: 20px;
+}
+
+.help-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e40af;
+  margin-bottom: 8px;
+}
+
+.help-section p {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.help-section ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.help-section ul li {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.help-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.help-table th {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 7px 8px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.help-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: top;
+}
