@@ -1,4 +1,4 @@
-const CACHE = "topik-v2.1.1 Beta";
+const CACHE = "topik-v2.1.2 Beta";
 const FILES = [
   "index.html","style.css",
   "app.js","game.js","navigation.js",

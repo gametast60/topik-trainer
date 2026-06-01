@@ -169,7 +169,7 @@
           <label><input type="checkbox" id="clearWrongBoxCheck"> กล่องคำผิด (❌)</label>
         </div>
         <div style="display:flex;gap:8px;margin-top:8px">
-  <button class="settings-btn settings-btn-red" style="flex:1;margin-top:0;padding:6px 12px" onclick="clearSelectedBoxes()">รีเซ็ตกล่องที่เลือก</button>
+  <button class="settings-btn settings-btn-red" style="flex:1;margin-top:0;padding:4px 12px" onclick="clearSelectedBoxes()">รีเซ็ตกล่องที่เลือก</button>
   <button class="settings-btn" style="flex:1;margin-top:0;background:#6b7280;color:white;padding:6px 12px" onclick="document.querySelectorAll('#clearBoxChecks input').forEach(cb=>cb.checked=false)">ลบที่เลือก</button>
 </div>
       </div>
@@ -305,6 +305,8 @@
       <div class="srs-game-info" id="practiceGameInfo"></div>
       <button class="menu-btn" style="background:#16a34a;" onclick="startPracticeGame('quiz')">🔤 จับคู่</button>
       <button class="menu-btn" onclick="startPracticeGame('typing')">⌨️ เติมคำ</button>
+<button class="menu-btn" style="background:#0891b2;" onclick="openPracticeBoxModal()">📦 เลือกกล่องเล่น</button>
+<div id="practiceBoxFilterLabel" style="font-size:13px;color:#16a34a;font-weight:700;margin-top:8px;padding:10px;background:#f0fdf4;border-radius:10px;border:2px solid #86efac;min-height:18px;"></div>
     </div>
 
     <!-- SRS STATS SCREEN -->
@@ -317,6 +319,28 @@
 </div>
 
   <!-- BOX INSPECTOR MODAL -->
+   <!-- PRACTICE BOX SELECTOR POPUP -->
+<div id="practiceBoxModal" class="box-inspector-overlay hidden" onclick="closePracticeBoxModal(event)">
+  <div class="box-inspector-sheet" onclick="event.stopPropagation()" style="height:auto;max-height:80vh;border-radius:20px 20px 0 0;margin-bottom:60px;">
+    <div class="box-inspector-header">
+      <div class="box-inspector-title" style="color:#16a34a;">🎮 เลือกกล่องที่จะเล่น</div>
+      <button class="box-inspector-close" onclick="closePracticeBoxModal()">✕</button>
+    </div>
+    <div style="padding:14px 18px;overflow-y:auto;flex:1;">
+      <label style="display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;padding:8px 0;border-bottom:2px solid #e5e7eb;margin-bottom:8px;cursor:pointer;">
+        <input type="checkbox" id="practiceSelectAll" style="width:18px;height:18px;accent-color:#16a34a;" onchange="togglePracticeSelectAll(this.checked)">
+        เลือกทั้งหมด
+      </label>
+      <div id="practiceBoxChecklist"></div>
+      <div id="practiceBoxSummary" style="text-align:center;font-size:13px;color:#16a34a;font-weight:700;margin-top:12px;padding:10px;background:#f0fdf4;border-radius:10px;border:2px solid #86efac;"></div>
+    </div>
+    <div style="display:flex;gap:10px;padding:14px 18px;border-top:1px solid #e5e7eb;">
+      <button onclick="clearPracticeBoxSelection()" style="flex:1;background:#e5e7eb;color:#374151;font-size:15px;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;margin:0;">ล้าง</button>
+      <button onclick="confirmPracticeBoxSelection()" style="flex:2;background:#16a34a;color:white;font-size:15px;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;margin:0;">ตกลง</button>
+    </div>
+  </div>
+</div>
+
   <div id="boxInspectorModal" class="box-inspector-overlay hidden" onclick="closeBoxInspector()">
     <div class="box-inspector-sheet" onclick="event.stopPropagation()">
       <div class="box-inspector-header">
