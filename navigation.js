@@ -304,8 +304,6 @@ function getPracticeWordsByBoxes(selectedBoxes, limit){
 // นับจำนวนคำในแต่ละกล่อง (สำหรับแสดงใน popup)
 function getPracticeBoxCounts(){
   const counts = getBoxCounts(); // [0,1,2,3,4,5] จาก srs.js
-  const wrongBoxCount = getWrongBoxWords().length;
-  return [...counts, wrongBoxCount]; // index 6 = กล่องคำผิด
 }
 
 // เปิด popup
