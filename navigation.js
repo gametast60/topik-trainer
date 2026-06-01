@@ -235,6 +235,9 @@ function startWrongBoxGame(mode){
 // ============================================================
 function openPractice(){
   renderPracticeBoxFilterLabel();
+  document.getElementById("practiceGameInfo").innerHTML = `
+    <div class="srs-session-label">🎮 ฝึกหัด</div>
+    <div class="srs-session-note">1. เลือกกล่องคำที่เล่น &nbsp;2. เลือกโหมดเกม</div>`;
   goTo("practiceGameMenu");
 }
 
@@ -251,9 +254,7 @@ function startPracticeGame(mode){
   srsSessionType    = "practice";
   srsSessionMode    = mode;
   currentVocabulary = words.map(i => ({ word: i.word, meaning: i.meaning }));
-  document.getElementById("practiceGameInfo").innerHTML = `
-    <div class="srs-session-label">🎮 ฝึกหัด</div>
-    <div class="srs-session-note">สุ่ม ${words.length} คำ — ไม่มีผลต่อ SRS</div>`;
+
   if(mode === "quiz"){
     shuffledVocabulary = shuffleArray([...currentVocabulary]);
     quizIndex = 0; wrongAnswers = [];
